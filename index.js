@@ -1,109 +1,119 @@
 // global datastore
 let store = { neighborhoods: [], meals: [], customers: [], deliveries: [] };
-
-let neighborhoodId = 0;
-let mealId = 0;
-let customerId = 0;
-let deliveryId = 0;
+let neighborhoodId = 0
+let customerId = 0
+let mealId = 0
+let deliveryId = 0
 
 class Neighborhood {
-  constructor(name){
-    this.name = name;
-    this.id = neighborhoodId++;
-    store.neighborhoods.push(this);
+  constructor(name) {
+    this.id = ++neighborhoodId
+    this.name = name
+
+    store.neighborhoods.push(this)
   }
 
-
+  customers() {
+    return store.customers.filter(customer => {
+      return customer.neighborhoodId = this.id
+    })
+  }
   deliveries() {
-    return store.deliveries.filter(delivery => delivery.neighborhoodId === this.id);
+    return store.deliveries.filter(delivery => {
+      return delivery.neighborhoodId === this.id
+    })
   }
 
-
-  customers(){
-    return store.customers.filter(customer => customer.neighborhoodId === this.id);
-  }
-
-
-  meals(){
-    let meals = this.deliveries().map(delivery => delivery.meal());
-    return meals.filter(function(meal, index, meals) {
-      return meals.indexOf(meal) === index;
-    });
+  meals() {
+    let mealsReturn = []
+    this.deliveries().forEach(delivery => {
+      if (!mealsReturn.includes(delivery.meal())){
+        mealsReturn.push(delivery.meal())}
+    })
+    return mealsReturn
   }
 }
 
 class Customer {
+  constructor(name, neighborhoodId) {
+    this.id = ++customerId
+    this.name = name
+    this.neighborhoodId = neighborhoodId
 
-  constructor(name, neighborhoodId){
-    this.name = name;
-    this.neighborhoodId = neighborhoodId;
-    this.id = ++customerId;
-    store.customers.push(this);
+    store.customers.push(this)
   }
 
-  deliveries(){
-    return store.deliveries.filter(delivery => delivery.customerId === this.id);
+  deliveries() {
+    return store.deliveries.filter(delivery => {
+      return delivery.customerId === this.id
+    })
   }
 
-
-  meals(){
-    return this.deliveries().map(delivery => delivery.meal())
+  meals() {
+    return this.deliveries().map(delivery => {
+      return delivery.meal()
+    })
   }
 
-
-  totalSpent(){
-    return this.meals().reduce(function (accumulator, meal){
-      return accumulator + meal.price;
-    }, 0);
+  totalSpent() {
+    return this.meals().reduce(function (agg, el) {
+      return agg + el.price}, 0)
   }
 }
 
-
 class Meal {
-  constructor(title, price){
-    this.title = title;
-    this.price = price;
-    this.id = mealId++;
-    store.meals.push(this);
+  constructor(title, price) {
+    this.id = ++mealId
+    this.title = title
+    this.price = price
+
+    store.meals.push(this)
   }
 
-
-  deliveries(){
-    return store.deliveries.filter(delivery => delivery.mealId === this.id);
+  deliveries() {
+    return store.deliveries.filter(delivery => {
+      return delivery.mealId === this.id
+    })
   }
 
-  customers(){
-    return this.deliveries().map(delivery => delivery.customer())
+  customers() {
+    return this.deliveries().map(delivery => {
+      return delivery.customer()
+    })
   }
 
   static byPrice() {
-    return store.meals.sort(function (meal1, meal2){
-      return meal2.price > meal1.price
-    });
+    return store.meals.sort(function(a,b) {
+      return a.price < b.price
+    })
   }
-
 }
 
-
 class Delivery {
-  constructor(mealId, neighborhoodId, customerId){
-    this.mealId = mealId;
-    this.neighborhoodId = neighborhoodId;
-    this.customerId = customerId;
-    this.id = ++deliveryId;
-    store.deliveries.push(this);
-  };
+  constructor(mealId, neighborhoodId, customerId) {
+    this.id = ++deliveryId
+    this.mealId = mealId
+    this.neighborhoodId = neighborhoodId
+    this.customerId = customerId
 
-  meal(){
-    return store.meals.find(meal => meal.id === this.mealId);
+    store.deliveries.push(this)
   }
 
-  customer(){
-    return store.customers.find(customer => customer.id === this.customerId);
+  meal() {
+    return store.meals.find(meal => {
+      return meal.id === this.mealId
+    })
   }
 
-  neighborhood(){
-    return store.neighborhoods.find(neighborhood => neighborhood.id === this.neighborhoodId);
+  customer() {
+    return store.customers.find(customer => {
+      return customer.id === this.customerId
+    })
   }
 
+  neighborhood() {
+    return store.neighborhoods.find(neighborhood => {
+      return neighborhood.id === this.neighborhoodId
+    })
+  }
 }
