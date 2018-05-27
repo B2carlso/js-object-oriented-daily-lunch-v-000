@@ -78,3 +78,26 @@ class Meal {
   }
 
 }
+
+class Delivery {
+  constructor(mealId, neighborhoodId, customerId){
+    this.mealId = mealId;
+    this.neighborhoodId = neighborhoodId;
+    this.customerId = customerId;
+    this.id = ++deliveryId;
+    store.deliveries.push(this);
+  };
+
+  meal(){
+    return store.meals.find(meal => meal.id === this.mealId);
+  }
+
+  customer(){
+    return store.customers.find(customer => customer.id === this.customerId);
+  }
+
+  neighborhood(){
+    return store.neighborhoods.find(neighborhood => neighborhood.id === this.neighborhoodId);
+  }
+
+}
